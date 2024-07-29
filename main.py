@@ -13,7 +13,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-client = Groq(api_key= "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")
+# client = Groq(api_key= "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")
 # Define the Request Body schema
 class PromptRequest(BaseModel):
     Prompt: str
@@ -25,18 +25,35 @@ import requests
 def scrape_jina_ai(url: str) -> str:
   response = requests.get("https://r.jina.ai/" + url)
   return response.text
-
+import requests
 def groqResponse(prompt):
-  client = Groq(api_key="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")
-  chat_completion = client.chat.completions.create(
-  messages=[
-        {
-            "role": "user",
-            "content": prompt
-        }
-    ],
-    model="llama3-8b-8192")
-  return (chat_completion.choices[0].message.content)
+  api_key = "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"
+  url = "https://api.groq.com/openai/v1/chat/completions"
+  headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+    }
+  data = {
+    "messages": [{"role": "user", "content": prompt}],
+    "model": "llama3-70b-8192"
+    }
+  response = requests.post(url, headers=headers, json=data)
+  try:
+    return response.json()['choices'][0]['message']['content']
+  except:
+    return response.json()
+  
+# def groqResponse(prompt):
+#   client = Groq(api_key="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")
+#   chat_completion = client.chat.completions.create(
+#   messages=[
+#         {
+#             "role": "user",
+#             "content": prompt
+#         }
+#     ],
+#     model="llama3-8b-8192")
+#   return (chat_completion.choices[0].message.content)
 
 def chunk_of_text(text):
   result = []
